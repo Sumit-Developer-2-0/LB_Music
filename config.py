@@ -8,25 +8,57 @@ from pyrogram import filters
 load_dotenv()
 
 # Get this value from my.telegram.org/apps
-API_ID = int(getenv("API_ID", None))
-API_HASH = getenv("API_HASH", None)
+API_ID = os.getenv("API_ID")
+if API_ID is None:
+    raise EnvironmentError("API_ID environment variable not set.  Please set it.")
+try:
+    API_ID = int(API_ID)
+except ValueError:
+    raise ValueError("API_ID environment variable must be an integer.")
+
+API_HASH = os.getenv("API_HASH")
+if API_HASH is None:
+    raise EnvironmentError("API_HASH environment variable not set.  Please set it.")
+
 
 # Get your token from @BotFather on Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN", None)
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if BOT_TOKEN is None:
+    raise EnvironmentError("BOT_TOKEN environment variable not set.  Please set it.")
 
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 MUSIC_BOT_NAME = getenv("MUSIC_BOT_NAME", None)
 PRIVATE_BOT_MODE = getenv("PRIVATE_BOT_MODE", None)
 
-DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 900))
+DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", "900"))
 
 # Chat id of a group for logging bot's activities
-LOGGER_ID = int(getenv("LOGGER_ID", None))
-LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", None))
+LOGGER_ID = os.getenv("LOGGER_ID")
+if LOGGER_ID is not None:
+    try:
+        LOGGER_ID = int(LOGGER_ID)
+    except ValueError:
+        raise ValueError("LOGGER_ID environment variable must be an integer.")
+else:
+    LOGGER_ID = None  # Or some other appropriate default value
+
+
+LOG_GROUP_ID = os.getenv("LOG_GROUP_ID")
+if LOG_GROUP_ID is not None:
+    try:
+        LOG_GROUP_ID = int(LOG_GROUP_ID)
+    except ValueError:
+        raise ValueError("LOG_GROUP_ID environment variable must be an integer.")
+else:
+    LOG_GROUP_ID = None  # Or some other appropriate default value
 
 # Get this value Telegram id
-OWNER_ID = int(getenv("OWNER_ID", "5016109398"))
+OWNER_ID = os.getenv("OWNER_ID", "5016109398")
+try:
+    OWNER_ID = int(OWNER_ID)
+except ValueError:
+    raise ValueError("OWNER_ID environment variable must be an integer.")
 
 ## Fill these variables if you're deploying on heroku.
 # Your heroku app name
@@ -47,7 +79,7 @@ SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/learningbots79")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/learning_bots")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
-AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
+AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", "False")) # explicitly convert to boolean
 
 # Auto Gcast/Broadcast Handler (True = broadcast on , False = broadcast off During Hosting, Dont Do anything here.)
 AUTO_GCAST = os.getenv("AUTO_GCAST")
@@ -125,4 +157,4 @@ if SUPPORT_CHAT:
     if not re.match("(?:http|https)://", SUPPORT_CHAT):
         raise SystemExit(
             "[ERROR] - Your SUPPORT_CHAT url is wrong. Please ensure that it starts with https://"
-        )
+)
