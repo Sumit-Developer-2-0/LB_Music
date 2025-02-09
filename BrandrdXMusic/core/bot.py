@@ -28,7 +28,8 @@ class Hotty(Client):
         try:
             await self.send_message(
                 chat_id=config.LOGGER_ID,
-                text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
+                text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b></u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
+                parse_mode=ParseMode.HTML # Explicitly set parse_mode to HTML
             )
         except (errors.ChannelInvalid, errors.PeerIdInvalid):
             LOGGER(__name__).error(
@@ -40,11 +41,21 @@ class Hotty(Client):
                 f"Bot has failed to access the log group/channel.\n  Reason : {type(ex).__name__}."
             )
 
-        a = await self.get_chat_member(config.LOGGER_ID, self.id)
-        if a.status != ChatMemberStatus.ADMINISTRATOR:
+        try:
+            a = await self.get_chat_member(config.LOGGER_ID, self.id)
+            if a.status != ChatMemberStatus.ADMINISTRATOR:
+                LOGGER(__name__).error(
+                    "Please promote your bot as an admin in your log group/channel."
+                )
+        except errors.PeerIdInvalid:
             LOGGER(__name__).error(
-                "Please promote your bot as an admin in your log group/channel."
+                "The bot is not present in the log group/channel.  Please add the bot and grant administrator privileges."
             )
+        except Exception as e:
+            LOGGER(__name__).error(
+                f"An error occurred while checking admin status: {e}"
+            )
+
 
         LOGGER(__name__).info(f"Music Bot Started as {self.name}")
 
